@@ -1,0 +1,86 @@
+{
+  "aegis-desktop-kanban": {
+    "w": 1440,
+    "h": 860,
+    "files": [
+      [
+        "aegis-desktop-kanban-640.webp",
+        640
+      ],
+      [
+        "aegis-desktop-kanban-1280.webp",
+        1280
+      ]
+    ]
+  },
+  "aegis-desktop-today": {
+    "w": 1440,
+    "h": 860,
+    "files": [
+      [
+        "aegis-desktop-today-640.webp",
+        640
+      ],
+      [
+        "aegis-desktop-today-1280.webp",
+        1280
+      ]
+    ]
+  },
+  "aegis-web-dashboard": {
+    "w": 1600,
+    "h": 1000,
+    "files": [
+      [
+        "aegis-web-dashboard-640.webp",
+        640
+      ],
+      [
+        "aegis-web-dashboard-1280.webp",
+        1280
+      ]
+    ]
+  },
+  "aegis-web-mobile-today": {
+    "w": 600,
+    "h": 1298,
+    "files": [
+      [
+        "aegis-web-mobile-today-320.webp",
+        320
+      ],
+      [
+        "aegis-web-mobile-today-600.webp",
+        600
+      ]
+    ]
+  },
+  "refinery-anomaly": {
+    "w": 1160,
+    "h": 659,
+    "files": [
+      [
+        "refinery-anomaly-640.webp",
+        640
+      ],
+      [
+        "refinery-anomaly-1160.webp",
+        1160
+      ]
+    ]
+  },
+  "refinery-dashboard": {
+    "w": 1600,
+    "h": 1000,
+    "files": [
+      [
+        "refinery-dashboard-640.webp",
+        640
+      ],
+      [
+        "refinery-dashboard-1280.webp",
+        1280
+      ]
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title>Sepehr Khastoo, Backend Engineer, Resume</title>
+<meta name="author" content="Sepehr Khastoo">
+<link rel="stylesheet" href="resume.css">
+</head>
+<body>
+<div class="page">
+<header>
+  <div>
+    <h1>Sepehr Khastoo</h1>
+    <p class="role">Backend Engineer, Python and Django</p>
+  </div>
+  <p class="contact">
+    Tehran, Iran · open to remote work<br>
+    <a href="mailto:sepehrkhasto.private@gmail.com"><b>sepehrkhasto.private@gmail.com</b></a><br>
+    <a href="https://sepehrkhasto.github.io">sepehrkhasto.github.io</a><br>
+    <a href="https://github.com/sepehrkhasto">github.com/sepehrkhasto</a> &nbsp;|&nbsp; <a href="https://linkedin.com/in/sepehrkhasto">linkedin.com/in/sepehrkhasto</a>
+  </p>
+</header>
+
+<main>
+  <section>
+    <h2>Education</h2>
+    <div class="proj-top"><h3>B.Sc. in Computer Engineering (Software) <span>· Islamic Azad University, West Tehran Branch</span></h3><span class="when">Sep 2024 – present</span></div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+
+    <div class="proj">
+      <div class="proj-top"><h3>Aegis Planner, Web <span>· Creator, open source, v7.1.0</span></h3><span class="when">2026</span></div>
+      <p class="meta"><a class="mono" href="https://github.com/sepehrkhasto/aegis-zk-planner">github.com/sepehrkhasto/aegis-zk-planner</a> · Django 4.2, Web Crypto API, Argon2, django-csp, GitHub Actions</p>
+      <ul>
+        <li>Built a zero-knowledge planner: the browser encrypts all data with AES-256-GCM, and the server sees only ciphertext.</li>
+        <li>Implemented PBKDF2-SHA256 key wrapping (600,000 iterations): a password change re-wraps one key, not the vault.</li>
+        <li>Added revision-checked saves that return HTTP 409 on stale writes, preventing silent overwrites between devices.</li>
+        <li>Hardened the server with a strict CSP, Argon2 hashing, per-IP rate limiting and account lockout; 146 Django tests and 556 JavaScript checks run in CI.</li>
+      </ul>
+    </div>
+
+    <div class="proj">
+      <div class="proj-top"><h3>Aegis Planner, Desktop <span>· Creator, open source, v2.11.10</span></h3><span class="when">2026</span></div>
+      <p class="meta"><a class="mono" href="https://github.com/sepehrkhasto/aegis-planner">github.com/sepehrkhasto/aegis-planner</a> · Python, PyQt6, cryptography, pytest, PyInstaller</p>
+      <ul>
+        <li>Shipped an offline, encrypted planner for Windows with a Persian interface and a Jalali calendar.</li>
+        <li>Made storage crash-safe with atomic writes (temporary file, fsync, rename) and encrypted backups with verify and restore.</li>
+        <li>Set up release builds from tagged source in GitHub Actions, published with SHA-256 checksums; 971 pytest tests.</li>
+      </ul>
+    </div>
+
+    <div class="proj">
+      <div class="proj-top"><h3>Refinery Risk Monitor <span>· Project Lead, team of four</span></h3><span class="when">2026</span></div>
+      <p class="meta"><a class="mono" href="https://github.com/sepehrkhasto/refinery-risk-monitor">github.com/sepehrkhasto/refinery-risk-monitor</a> · FastAPI, SQLAlchemy 2.0, Alembic, JWT, WebSocket, scikit-learn</p>
+      <ul>
+        <li>Led a team of four through scope, architecture and delivery of a FastAPI platform for live risk scoring and forecasting; placed in the top three of the course.</li>
+        <li>Implemented JWT role-based access (operator, engineer, admin) on every endpoint; production refuses to start with a default secret key or wildcard CORS.</li>
+        <li>Served P10/P50/P90 forecasts and SHAP explanations over REST, and streamed live risk scores over WebSocket.</li>
+      </ul>
+    </div>
+
+    <div class="proj">
+      <div class="proj-top"><h3>Andarun <span>· Creator, in development</span></h3><span class="when">2026 – present</span></div>
+      <p class="meta"><a class="mono" href="https://github.com/sepehrkhasto/andarun">github.com/sepehrkhasto/andarun</a> · Python 3.12, Django 6.1</p>
+      <ul>
+        <li>Building an invite-only, text-only social network that needs no outside services, so it keeps working during shutdowns.</li>
+        <li>Implemented a custom user model with username login and strict usernames (<span class="mono">[a-z0-9_]{3,20}</span>, stored in lowercase), with fail-closed settings: no default secret key, DEBUG off by default.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <div><dt>Languages</dt><dd>Python, SQL; C and C++ (basic)</dd></div>
+      <div><dt>Backend</dt><dd>Django (ORM, migrations, custom user model, admin, forms and validation); also used FastAPI, SQLAlchemy, Alembic and WebSocket</dd></div>
+      <div><dt>Databases</dt><dd>PostgreSQL, MySQL, SQLite; relational schema design</dd></div>
+      <div><dt>Security</dt><dd>Web Crypto API (AES-256-GCM, PBKDF2 key wrapping), Argon2, Content Security Policy, JWT role-based access, environment-based configuration with safe defaults</dd></div>
+      <div><dt>Tools</dt><dd>Git and GitHub (feature branches, conventional commits, fast-forward merges), GitHub Actions, PyQt6</dd></div>
+      <div><dt>Familiar with</dt><dd>Class-based views and mixins; authentication, sessions and permissions; ORM query optimization (N+1, select_related, prefetch_related); transactions and row-level locking; Docker; Linux command line; networking fundamentals (Network+)</dd></div>
+      <div><dt>Learning</dt><dd>Django REST Framework, automated testing with Django TestCase</dd></div>
+      <div><dt>Soft skills</dt><dd>Team leadership, technical writing, self-directed learning, debugging</dd></div>
+    </dl>
+  </section>
+
+  <section class="bottom">
+    <div>
+      <h2>Other experience</h2>
+      <p><b>Logistics Operations Specialist</b>, Baroline, Tehran <span class="muted">· Jun – Aug 2026, full-time</span></p>
+    </div>
+    <div>
+      <h2>Languages</h2>
+      <p>Persian (native), English (B1, working toward B2)</p>
+    </div>
+  </section>
+</main>
+</div>
+</body>
+</html>

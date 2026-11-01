@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sepehr Khastoo, Backend Engineer, Resume</title>
+<meta name="author" content="Sepehr Khastoo">
+<!-- Single-column version for applicant tracking systems. Keep the facts identical to en.html. -->
+<style>
+@page{size:A4;margin:11mm 14mm}
+body{font-family:Arial,"Liberation Sans",Helvetica,sans-serif;font-size:9.8pt;line-height:1.26;color:#000;margin:0}
+h1{font-size:16pt;margin:0}
+h2{font-size:10.5pt;margin:7pt 0 3pt;padding-bottom:1.5pt;border-bottom:.75pt solid #000;text-transform:uppercase;letter-spacing:.02em}
+h3{font-size:10pt;margin:5pt 0 1pt}
+p{margin:0 0 1.5pt}
+ul{margin:1.5pt 0 0 13pt;padding:0}
+li{margin-bottom:1pt}
+a{color:#000;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>Sepehr Khastoo</h1>
+<p>Backend Engineer, Python and Django | Tehran, Iran | Open to remote work</p>
+<p>sepehrkhasto.private@gmail.com | sepehrkhasto.github.io | github.com/sepehrkhasto | linkedin.com/in/sepehrkhasto</p>
+
+<h2>Education</h2>
+<p><b>B.Sc. in Computer Engineering (Software)</b>, Islamic Azad University, West Tehran Branch | Sep 2024 – Present</p>
+
+<h2>Projects</h2>
+<h3>Aegis Planner, Web | Creator, open source, v7.1.0 | 2026</h3>
+<p>github.com/sepehrkhasto/aegis-zk-planner | Django 4.2, Web Crypto API, Argon2, django-csp, GitHub Actions</p>
+<ul>
+<li>Built a zero-knowledge planner: the browser encrypts all data with AES-256-GCM, and the server sees only ciphertext.</li>
+<li>Implemented PBKDF2-SHA256 key wrapping (600,000 iterations): a password change re-wraps one key, not the vault.</li>
+<li>Added revision-checked saves that return HTTP 409 on stale writes, preventing silent overwrites between devices.</li>
+<li>Hardened the server with a strict CSP, Argon2 hashing, per-IP rate limiting and account lockout; 146 Django tests and 556 JavaScript checks run in CI.</li>
+</ul>
+
+<h3>Aegis Planner, Desktop | Creator, open source, v2.11.10 | 2026</h3>
+<p>github.com/sepehrkhasto/aegis-planner | Python, PyQt6, cryptography, pytest, PyInstaller</p>
+<ul>
+<li>Shipped an offline, encrypted planner for Windows with a Persian interface and a Jalali calendar.</li>
+<li>Made storage crash-safe with atomic writes (temporary file, fsync, rename) and encrypted backups with verify and restore.</li>
+<li>Set up release builds from tagged source in GitHub Actions, published with SHA-256 checksums; 971 pytest tests.</li>
+</ul>
+
+<h3>Refinery Risk Monitor | Project Lead, team of four | 2026</h3>
+<p>github.com/sepehrkhasto/refinery-risk-monitor | FastAPI, SQLAlchemy 2.0, Alembic, JWT, WebSocket, scikit-learn</p>
+<ul>
+<li>Led a team of four through scope, architecture and delivery of a FastAPI platform for live risk scoring and forecasting; placed in the top three of the course.</li>
+<li>Implemented JWT role-based access (operator, engineer, admin) on every endpoint; production refuses to start with a default secret key or wildcard CORS.</li>
+<li>Served P10/P50/P90 forecasts and SHAP explanations over REST, and streamed live risk scores over WebSocket.</li>
+</ul>
+
+<h3>Andarun | Creator, in development | 2026 – Present</h3>
+<p>github.com/sepehrkhasto/andarun | Python 3.12, Django 6.1</p>
+<ul>
+<li>Building an invite-only, text-only social network that needs no outside services, so it keeps working during shutdowns.</li>
+<li>Implemented a custom user model with username login and strict usernames ([a-z0-9_]{3,20}, stored in lowercase), with fail-closed settings: no default secret key, DEBUG off by default.</li>
+</ul>
+
+<h2>Skills</h2>
+<p>Languages: Python, SQL; C and C++ (basic)</p>
+<p>Backend: Django (ORM, migrations, custom user model, admin, forms and validation); also used FastAPI, SQLAlchemy, Alembic and WebSocket</p>
+<p>Databases: PostgreSQL, MySQL, SQLite; relational schema design</p>
+<p>Security: Web Crypto API (AES-256-GCM, PBKDF2 key wrapping), Argon2, Content Security Policy, JWT role-based access, environment-based configuration with safe defaults</p>
+<p>Tools: Git and GitHub (feature branches, conventional commits, fast-forward merges), GitHub Actions, PyQt6</p>
+<p>Familiar with: Class-based views and mixins; authentication, sessions and permissions; ORM query optimization (N+1, select_related, prefetch_related); transactions and row-level locking; Docker; Linux command line; networking fundamentals (Network+)</p>
+<p>Learning: Django REST Framework, automated testing with Django TestCase</p>
+<p>Soft skills: Team leadership, technical writing, self-directed learning, debugging</p>
+
+<h2>Other Experience</h2>
+<p><b>Logistics Operations Specialist</b>, Baroline, Tehran | Jun 2026 – Aug 2026, full-time</p>
+
+<h2>Languages</h2>
+<p>Persian (native), English (B1, working toward B2)</p>
+</body>
+</html>
