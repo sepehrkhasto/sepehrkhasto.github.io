@@ -19,18 +19,20 @@ python -m unittest discover -s tests -v
 | --- | --- |
 | `content/en.json`, `content/fa.json` | All page copy. Both files keep the same structure; the tests check this. |
 | `build.py` | Renders the content into `dist/`: one page per language, plus `404.html`, `sitemap.xml` and `robots.txt`. |
-| `static/` | CSS, JavaScript, fonts (IBM Plex, self-hosted), images and the resume PDFs. Copied to `dist/` as is. |
+| `static/` | CSS, JavaScript, fonts (Instrument Serif, Geist, Geist Mono, and Vazirmatn, self-hosted), images and the resume PDFs. Copied to `dist/` as is. |
 | `assets-src/` | Original screenshots and `images.json`, which records their sizes for the build. |
 | `resume/` | HTML sources for the resumes and the script that renders them to PDF. |
-| `brand/`, `tools/` | Banner and social preview images, and the scripts that produce them and the WebP screenshots. |
-| `tests/` | Build and content checks, run in CI before each deploy. |
+| `brand/`, `tools/` | Banner and social preview images, and the scripts that produce them, the WebP screenshots and the favicons (`tools/make_icons.py`, drawn from the same mark as the header). |
+| `tests/` | Build and content checks, run in CI before each deploy. `tests/claims.json` records the source of every number and factual claim on the site; a test fails if a number has no entry or if English and Persian disagree. `tests/browser_check.py` is a browser pass (sizes, keyboard, no scripting, reduced motion) that you run by hand; it needs Playwright and Chromium. |
 
 ## Editing
 
 - **Copy:** edit the same field in both `content/*.json` files, then run the tests.
 - **Screenshots:** add a PNG to `assets-src/screenshots/` and run `python tools/process_images.py` (Pillow).
 - **Resumes:** edit `resume/en.html` and `resume/fa.html`, then run `python resume/make_pdfs.py` (Playwright with Chromium). `resume/ats-en.html` produces a plain single-column version for job portals; it stays out of the published site.
-- **Images:** `python tools/make_brand.py` regenerates the social preview and the LinkedIn and GitHub banners.
+- **Images:** `python tools/make_brand.py` regenerates the social preview and the LinkedIn and GitHub banners; `python tools/make_icons.py` (Playwright) regenerates the favicons.
+- **Numbers and claims:** when you add or change a number in the copy or a resume, add or update its entry in `tests/claims.json`.
+- **Fonts:** the full fonts are in `assets-src/fonts/`. `static/assets/fonts/` holds copies cut to the characters the site uses. After adding text with new letters, run `python build.py`, then `python tools/subset_fonts.py` (needs `pip install fonttools brotli`), then `python build.py` again. The script warns if a character is missing.
 
 ## Deployment
 

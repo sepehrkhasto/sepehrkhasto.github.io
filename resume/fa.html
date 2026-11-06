@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>رزومهٔ سپهر خستو، مهندس نرم‌افزار بک‌اند</title>
+<title>رزومهٔ سپهر خستو، توسعه‌دهندهٔ جونیور بک‌اند</title>
 <meta name="author" content="Sepehr Khastoo">
 <link rel="stylesheet" href="resume.css">
 </head>
@@ -11,7 +11,7 @@
 <header>
   <div>
     <h1>سپهر خستو</h1>
-    <p class="role">مهندس نرم‌افزار بک‌اند (<span class="ltr">Python</span> و <span class="ltr">Django</span>)</p>
+    <p class="role">توسعه‌دهندهٔ جونیور بک‌اند (<span class="ltr">Python</span> و <span class="ltr">Django</span>)</p>
   </div>
   <p class="contact">
     تهران · وضعیت نظام‌وظیفه: معافیت دائم<br>
@@ -24,7 +24,7 @@
 <main>
   <section>
     <h2>خلاصهٔ حرفه‌ای</h2>
-    <p class="summary">مهندس نرم‌افزار بک‌اند با تمرکز بر امنیت نرم‌افزار و صحت داده در <span class="ltr">Python</span> و <span class="ltr">Django</span>. سازندهٔ <span class="ltr">Aegis</span>، برنامه‌ریز متن‌باز با معماری دانش صفر برای وب و دسکتاپ، و سرپرست تیم چهارنفرهٔ پروژهٔ پایش ریسک پالایشگاه.</p>
+    <p class="summary">توسعه‌دهندهٔ جونیور بک‌اند با تمرکز بر امنیت نرم‌افزار و یکپارچگی داده‌ها در <span class="ltr">Python</span> و <span class="ltr">Django</span>. سازندهٔ <span class="ltr">Aegis</span>، برنامه‌ریز متن‌باز با معماری <span class="ltr">Zero-knowledge</span> برای وب و دسکتاپ، و سرپرست تیم چهارنفرهٔ پروژهٔ پایش ریسک پالایشگاه.</p>
   </section>
 
   <section>
@@ -39,9 +39,9 @@
       <div class="proj-top"><h3><span class="ltr">Aegis Planner</span>، نسخهٔ وب <span>· طراحی و توسعه، متن‌باز، نسخهٔ <span class="ltr">7.1.0</span></span></h3><span class="when">۱۴۰۵</span></div>
       <p class="meta"><a class="mono ltr" href="https://github.com/sepehrkhasto/aegis-zk-planner">github.com/sepehrkhasto/aegis-zk-planner</a> · <span class="ltr">Django 4.2, Web Crypto API, Argon2, django-csp, GitHub Actions</span></p>
       <ul>
-        <li>طراحی و پیاده‌سازی برنامه‌ریز با معماری دانش صفر؛ داده‌ها در مرورگر با <span class="ltr">AES-256-GCM</span> رمز می‌شوند و سرور فقط دادهٔ رمزشده را نگه می‌دارد.</li>
+        <li>طراحی و پیاده‌سازی برنامه‌ریز با معماری <span class="ltr">Zero-knowledge</span>؛ داده‌ها در مرورگر با <span class="ltr">AES-256-GCM</span> رمز می‌شوند و سرور فقط دادهٔ رمزشده را نگه می‌دارد.</li>
         <li>رمزگذاری کلید داده با کلید حاصل از <span class="ltr">PBKDF2-SHA256</span> (۶۰۰٬۰۰۰ تکرار)، به‌گونه‌ای که تغییر رمز عبور به رمزگذاری دوبارهٔ کل داده‌ها نیاز ندارد.</li>
-        <li>کنترل نسخه در ذخیره‌سازی و پاسخ <span class="ltr">HTTP 409</span> به درخواست‌های قدیمی، برای جلوگیری از بازنویسی ناخواسته میان دستگاه‌ها.</li>
+        <li>کنترل هم‌زمانی مبتنی بر شمارهٔ نسخه در ذخیره‌سازی و پاسخ <span class="ltr">HTTP 409</span> به درخواست‌های قدیمی، برای جلوگیری از بازنویسی ناخواسته میان دستگاه‌ها.</li>
         <li>مقاوم‌سازی سرور با <span class="ltr">CSP</span> سخت‌گیرانه، هش <span class="ltr">Argon2</span>، محدودسازی نرخ درخواست و قفل حساب؛ ۱۴۶ آزمون <span class="ltr">Django</span> و ۵۵۶ آزمون <span class="ltr">JavaScript</span> در <span class="ltr">CI</span>.</li>
       </ul>
     </div>
@@ -61,8 +61,8 @@
       <p class="meta"><a class="mono ltr" href="https://github.com/sepehrkhasto/refinery-risk-monitor">github.com/sepehrkhasto/refinery-risk-monitor</a> · <span class="ltr">FastAPI, SQLAlchemy 2.0, Alembic, JWT, WebSocket, scikit-learn</span></p>
       <ul>
         <li>سرپرستی تیم چهارنفره از تعریف محدوده و معماری تا تحویل سامانهٔ <span class="ltr">FastAPI</span> برای امتیازدهی زنده و پیش‌بینی ریسک؛ از سه پروژهٔ برتر درس.</li>
-        <li>کنترل دسترسی نقش‌محور (<span class="ltr">operator، engineer، admin</span>) با <span class="ltr">JWT</span> در همهٔ <span class="ltr">endpoint</span>ها؛ سرویس در <span class="ltr">production</span> با کلید پیش‌فرض یا <span class="ltr">CORS</span> باز اجرا نمی‌شود.</li>
-        <li>ارائهٔ پیش‌بینی <span class="ltr">P10/P50/P90</span> و تحلیل <span class="ltr">SHAP</span> از طریق <span class="ltr">REST</span> و ارسال زندهٔ امتیاز ریسک با <span class="ltr">WebSocket</span>.</li>
+        <li>هدایت بک‌اند (ساخته‌شده با ابزارهای هوش مصنوعی): کنترل دسترسی نقش‌محور با <span class="ltr">JWT</span> در همهٔ <span class="ltr">endpoint</span>ها؛ توقف اجرا در <span class="ltr">production</span> با کلید پیش‌فرض یا <span class="ltr">CORS</span> باز.</li>
+        <li>سامانه پیش‌بینی <span class="ltr">P10/P50/P90</span> و تحلیل <span class="ltr">SHAP</span> را از طریق <span class="ltr">REST</span> ارائه می‌دهد و امتیاز ریسک را به‌صورت زنده با <span class="ltr">WebSocket</span> می‌فرستد.</li>
       </ul>
     </div>
 
@@ -70,8 +70,8 @@
       <div class="proj-top"><h3>اندرون <span>· طراحی و توسعه، در حال توسعه</span></h3><span class="when">۱۴۰۵ تاکنون</span></div>
       <p class="meta"><a class="mono ltr" href="https://github.com/sepehrkhasto/andarun">github.com/sepehrkhasto/andarun</a> · <span class="ltr">Python 3.12, Django 6.1</span></p>
       <ul>
-        <li>توسعهٔ شبکهٔ اجتماعی متنی و دعوتی بدون وابستگی به سرویس بیرونی، برای کار در شرایط قطعی اینترنت.</li>
-        <li>پیاده‌سازی مدل کاربر سفارشی با ورود از طریق نام کاربری و قاعدهٔ <span class="mono ltr">[a-z0-9_]{3,20}</span>، همراه با پیکربندی امن پیش‌فرض: بدون کلید مخفی پیش‌فرض و با <span class="ltr">DEBUG</span> خاموش.</li>
+        <li>توسعهٔ شبکهٔ اجتماعی متنی و فقط با دعوت، طراحی‌شده برای کار روی شبکهٔ داخلی وقتی اینترنت بین‌المللی قطع است.</li>
+        <li>مدل کاربر سفارشی با ورود با نام کاربری و قاعدهٔ <span class="mono ltr">[a-z0-9_]{3,20}</span>؛ پیکربندی امن: بدون کلید مخفی پیش‌فرض و با <span class="ltr">DEBUG</span> خاموش.</li>
       </ul>
     </div>
   </section>
@@ -80,13 +80,13 @@
     <h2>مهارت‌ها</h2>
     <dl class="skills">
       <div><dt>زبان‌های برنامه‌نویسی</dt><dd><span class="ltr">Python</span>، <span class="ltr">SQL</span>؛ <span class="ltr">C</span> و <span class="ltr">C++</span> (در حد مقدماتی)</dd></div>
-      <div><dt>بک‌اند</dt><dd><span class="ltr">Django</span> (<span class="ltr">ORM</span>، مایگریشن، مدل کاربر سفارشی، پنل مدیریت، فرم و اعتبارسنجی)؛ تجربهٔ کار با <span class="ltr">FastAPI</span>، <span class="ltr">SQLAlchemy</span>، <span class="ltr">Alembic</span> و <span class="ltr">WebSocket</span></dd></div>
+      <div><dt>بک‌اند</dt><dd><span class="ltr">Django</span> (<span class="ltr">ORM</span>، مایگریشن، مدل کاربر سفارشی، پنل مدیریت، فرم و اعتبارسنجی)؛ آزمون خودکار با <span class="ltr">Django TestCase</span>؛ تجربهٔ کار با <span class="ltr">FastAPI</span>، <span class="ltr">SQLAlchemy</span>، <span class="ltr">Alembic</span> و <span class="ltr">WebSocket</span></dd></div>
       <div><dt>پایگاه داده</dt><dd><span class="ltr">PostgreSQL</span>، <span class="ltr">MySQL</span>، <span class="ltr">SQLite</span>؛ طراحی پایگاه دادهٔ رابطه‌ای</dd></div>
       <div><dt>امنیت</dt><dd><span class="ltr">Web Crypto API</span> (<span class="ltr">AES-256-GCM</span> و رمزگذاری کلید با <span class="ltr">PBKDF2</span>)، <span class="ltr">Argon2</span>، <span class="ltr">CSP</span>، کنترل دسترسی نقش‌محور با <span class="ltr">JWT</span>، پیکربندی مبتنی بر متغیرهای محیطی با پیش‌فرض‌های امن</dd></div>
       <div><dt>ابزارها</dt><dd><span class="ltr">Git</span> و <span class="ltr">GitHub</span> (شاخهٔ جدا برای هر قابلیت، <span class="ltr">Conventional Commits</span>، ادغام <span class="ltr">fast-forward</span>)، <span class="ltr">GitHub Actions</span>، <span class="ltr">PyQt6</span></dd></div>
       <div><dt>آشنایی کاربردی</dt><dd>ویوهای مبتنی بر کلاس و <span class="ltr">mixin</span>ها؛ احراز هویت، نشست و مجوزها؛ بهینه‌سازی کوئری <span class="ltr">ORM</span> با <span class="ltr">select_related</span> و <span class="ltr">prefetch_related</span> (مسئلهٔ <span class="ltr">N+1</span>)؛ تراکنش و قفل سطری؛ <span class="ltr">Docker</span>؛ خط فرمان لینوکس؛ مبانی شبکه (<span class="ltr">Network+</span>)</dd></div>
-      <div><dt>در حال یادگیری</dt><dd><span class="ltr">Django REST Framework</span>، آزمون خودکار با <span class="ltr">Django TestCase</span></dd></div>
-      <div><dt>مهارت‌های نرم</dt><dd>رهبری تیم، مستندسازی فنی، یادگیری مستقل، عیب‌یابی</dd></div>
+      <div><dt>در حال یادگیری</dt><dd><span class="ltr">Django REST Framework</span></dd></div>
+      <div><dt>مهارت‌های نرم</dt><dd>رهبری تیم، مستندسازی فنی، یادگیری مستقل</dd></div>
     </dl>
   </section>
 
@@ -97,7 +97,7 @@
     </div>
     <div>
       <h2>زبان‌ها</h2>
-      <p>فارسی (زبان مادری)، انگلیسی (سطح <span class="ltr">B1</span>، در مسیر <span class="ltr">B2</span>)</p>
+      <p>فارسی (زبان مادری)، انگلیسی (سطح <span class="ltr">B1</span>)</p>
     </div>
   </section>
 </main>

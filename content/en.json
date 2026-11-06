@@ -4,8 +4,9 @@
   "dir": "ltr",
   "locale": "en_US",
   "meta": {
-    "title": "Sepehr Khastoo, Backend Engineer (Python, Django)",
-    "description": "Backend engineer working with Python and Django on application security and data integrity. Projects include Aegis, a zero-knowledge planner, and Andarun, an invite-only social network."
+    "title": "Sepehr Khastoo, Junior Backend Developer (Python, Django)",
+    "description": "Junior backend developer working with Python and Django on application security and data integrity. Projects include Aegis, a zero-knowledge planner, and Andarun, an invite-only social network in development.",
+    "og_alt": "Sepehr Khastoo, Junior Backend Developer. Python and Django, with a focus on application security and data integrity. sepehrkhasto.github.io"
   },
   "switch": {
     "label": "فارسی",
@@ -20,12 +21,13 @@
     "contact": "Contact",
     "cta": "Get in touch",
     "menu": "Menu",
-    "close": "Close"
+    "close": "Close",
+    "theme": "Day theme"
   },
   "hero": {
-    "role": "Backend Engineer",
+    "role": "Junior Backend Developer",
     "statement": "Python and Django, with a focus on application security and data integrity.",
-    "summary": "Recent projects include a zero-knowledge planner whose server stores only ciphertext, a refinery risk-monitoring platform with role-based access and live WebSocket streams, and an invite-only social network designed to keep working through internet shutdowns.",
+    "summary": "Recent projects include a zero-knowledge planner whose server stores only ciphertext, a refinery risk-monitoring platform with role-based access and live WebSocket streams, and, in development, an invite-only social network designed to run on a domestic network when international access is cut.",
     "cta_work": "View selected work",
     "cta_resume": "Download resume",
     "facts": [
@@ -35,7 +37,7 @@
       },
       {
         "label": "Open to",
-        "value": "Backend roles and internships, remote or on-site"
+        "value": "Junior backend roles and internships, remote or on-site"
       }
     ]
   },
@@ -87,7 +89,7 @@
         "name": "andarun",
         "url": "https://github.com/sepehrkhasto/andarun",
         "desc": "Invite-only social network, Django",
-        "meta": "In development"
+        "meta": "In progress"
       }
     ]
   },
@@ -126,18 +128,18 @@
         "license": "MIT",
         "status": "Released, v7.1.0",
         "repo": "https://github.com/sepehrkhasto/aegis-zk-planner",
-        "problem": "Most planners store your plans in plaintext on their servers, where a breach or a malicious insider can expose all of it.",
+        "problem": "Many online planners keep your plans in a form their servers can read, so a breach or a malicious insider can expose all of it.",
         "design": "A password-manager key hierarchy in the browser. PBKDF2-SHA256 with 600,000 iterations derives a key-encryption key from the master password; a random 256-bit data key encrypts the vault with AES-256-GCM and is stored only in wrapped form. The Django backend stores only accounts, access rules and encrypted blobs, and never sees plaintext.",
         "highlights": [
           "A password change re-wraps the data key; the vault itself is not re-encrypted.",
           "The master password is checked by unwrapping the key: a wrong one fails the GCM tag check. It never leaves the browser.",
           "Saves carry a revision number. A stale write from a second device gets HTTP 409 instead of silently overwriting newer data.",
-          "Strict Content-Security-Policy: no inline script, no eval, frame-ancestors 'none'. The front end is plain JavaScript with no framework, which keeps the policy enforceable.",
+          "Strict Content-Security-Policy: no inline script, no eval, frame-ancestors 'none'. The frontend is plain JavaScript with no framework, which keeps the policy enforceable.",
           "Argon2 password hashing, per-IP rate limiting, per-username lockout, invite codes and an admin approval gate.",
           "Installable PWA with an offline cache and queued writes. Web Push reminders carry no task text, since the server never has it in readable form."
         ],
         "verification": "146 Django tests and 556 JavaScript checks, run by GitHub Actions on every push.",
-        "limits": "Does not protect against a compromised device, a malicious browser extension or a leaked master password. The threat model is documented in SECURITY.md.",
+        "limits": "Does not protect against a compromised device, a malicious browser extension or a leaked master password. The server also delivers the JavaScript that does the encryption, so a compromised server could deliver altered code; any web-based design shares this limit.",
         "stack": [
           "Django 4.2 LTS",
           "Web Crypto API",
@@ -158,6 +160,40 @@
             "src": "aegis-web-mobile-today",
             "alt": "Aegis Planner on a phone, Today view with overdue and scheduled tasks."
           }
+        },
+        "flow": {
+          "title": "What happens when you save",
+          "browser": "In your browser",
+          "server": "On the server",
+          "cut": "Only ciphertext crosses this line",
+          "steps": [
+            {
+              "t": "Unlock",
+              "d": "Your master password goes through PBKDF2 with 600,000 iterations and becomes a key that never leaves the browser."
+            },
+            {
+              "t": "Open the data key",
+              "d": "That key unwraps the data key. The password is never sent, and a wrong one fails the AES-GCM check right here."
+            },
+            {
+              "t": "Encrypt",
+              "d": "The whole vault is encrypted with the data key using AES-256-GCM."
+            },
+            {
+              "t": "Compare revisions",
+              "d": "Each save carries the revision it was built on."
+            }
+          ],
+          "outcomes": [
+            {
+              "tag": "Revision matches",
+              "d": "The server stores the ciphertext and raises the revision by one."
+            },
+            {
+              "tag": "Revision is old",
+              "d": "Another device saved first. The server answers HTTP 409 and stores nothing, so the newer data stays."
+            }
+          ]
         }
       },
       {
@@ -170,7 +206,7 @@
         "license": "GPL-3.0-or-later",
         "status": "Released, v2.11.10",
         "repo": "https://github.com/sepehrkhasto/aegis-planner",
-        "problem": "Most planners need an account and sync your data to a server. This one has no account, no server and no telemetry: everything stays in one encrypted file on the user's computer, and it was designed for Persian speakers from the start.",
+        "problem": "Many planners need an account and sync your data to a server. This one has no account, no server and no telemetry: everything stays in one encrypted file on the user's computer, and it was designed for Persian speakers from the start.",
         "design": "A PyQt6 application over a single AES-256-GCM vault. A random data key encrypts the vault and is wrapped by a key derived with PBKDF2-HMAC-SHA256 at 600,000 iterations. An optional recovery key wraps the same data key independently.",
         "highlights": [
           "Changing the password generates a new data key and re-encrypts the vault and every backup, so the old password stops working everywhere.",
@@ -211,7 +247,7 @@
         "status": "Top three in the course",
         "repo": "https://github.com/sepehrkhasto/refinery-risk-monitor",
         "problem": "Operators need to know which process unit is heading toward trouble, why, and how much to trust the forecast.",
-        "design": "I led the project end to end: product scope, system architecture, the ML pipeline design and delivery, with a frontend developer, a data analyst and an ML engineer. A FastAPI backend serves ML services over REST, streams live risk over WebSocket, and stores data through SQLAlchemy 2.0 with Alembic migrations.",
+        "design": "I led the project from scope to delivery, working with a frontend developer, a data analyst and an ML engineer. I set the system architecture and the ML pipeline design, and I directed the backend, which I built with AI coding tools and reviewed. The FastAPI backend serves ML services over REST, streams live risk over WebSocket, and stores data through SQLAlchemy 2.0 with Alembic migrations.",
         "highlights": [
           "Role-based access control (operator, engineer, admin) enforced per endpoint with JWT. Self-registration always creates an operator; only an admin can assign higher roles.",
           "In production mode the service refuses to start with a default SECRET_KEY or a wildcard CORS origin.",
@@ -219,7 +255,7 @@
           "Anomaly detection by an ensemble of Isolation Forest, One-Class SVM and Local Outlier Factor, with SHAP explanations of which sensors drive the risk.",
           "Structured JSON logs with correlation IDs, and separate health, readiness and liveness endpoints."
         ],
-        "verification": "A live simulator with fault injection drives the system end to end. An automated test suite is the next item on the roadmap.",
+        "verification": "A live simulator with fault injection drives the system end to end. Automated backend tests have not been written yet.",
         "limits": "Runs on simulated plant data. Ingesting a real historian or OPC UA feed is planned.",
         "stack": [
           "Python 3.12",
@@ -249,13 +285,13 @@
         "id": "andarun",
         "name": "Andarun",
         "kind": "In progress",
-        "tagline": "A text-only social network for friends, designed to keep working during internet shutdowns.",
+        "tagline": "A text-only, invite-only social network designed to run on a domestic network when international internet access is cut.",
         "role": "Design and development",
         "year": "2026",
         "license": "Not chosen yet",
         "status": "v1, phase 1.1: accounts",
         "repo": "https://github.com/sepehrkhasto/andarun",
-        "problem": "Most social platforms depend on email or phone verification, third-party CDNs and outside services, which are the first things to fail during a shutdown.",
+        "problem": "Many social platforms depend on email or phone verification, third-party CDNs and outside services. When a country's international traffic is cut, these are the first to fail.",
         "design": "No email and no outside services: username and password login, and every asset served by the app itself. Membership will be invite-only: each new account needs approval from the member who invited it, and invitations form a traceable tree.",
         "decisions": [
           {
@@ -317,15 +353,16 @@
           "SQLite (dev)",
           "PostgreSQL (planned)",
           "Docker (planned)"
-        ]
+        ],
+        "limits": "Not released yet, and there is no test suite. It has not been tested under a real shutdown; the design relies on having no outside dependencies."
       }
     ]
   },
   "approach": {
     "title": "Approach",
     "about": [
-      "I study computer engineering at Islamic Azad University, West Tehran Branch. I want to work on backend systems and infrastructure, especially where security matters.",
-      "I use AI coding tools every day. I make the architecture and security decisions myself and review every change before it goes in. Andarun is the exception: I'm writing all of it by hand, to learn Django properly."
+      "I study computer engineering at Islamic Azad University, West Tehran Branch, and work on backend systems with a focus on application security and data integrity.",
+      "I use AI coding tools every day. I decide the architecture and the security requirements, and I review what the tools produce before it goes in. Andarun is the exception: I'm writing all of it by hand, to learn Django properly."
     ],
     "principles": [
       {
@@ -345,8 +382,8 @@
       },
       {
         "title": "Prove it in CI",
-        "text": "If I claim a behavior, there's a test for it, and it runs on every push.",
-        "evidence": "Test suites run in GitHub Actions; desktop releases are built from tagged source and published with checksums."
+        "text": "For the behavior I claim, I write a test and run it on every push.",
+        "evidence": "Both Aegis projects run their tests in GitHub Actions, and desktop releases are built from tagged source and published with checksums. Refinery Risk Monitor and Andarun do not have test suites yet."
       }
     ]
   },
@@ -400,7 +437,8 @@
               "Class-based views and mixins",
               "Authentication, sessions and permissions",
               "ORM query optimization: N+1, select_related, prefetch_related",
-              "Transactions and row-level locking"
+              "Transactions and row-level locking",
+              "Automated testing with Django TestCase"
             ]
           },
           {
@@ -419,7 +457,6 @@
           {
             "label": "",
             "items": [
-              "Automated testing with Django TestCase",
               "Django REST Framework"
             ]
           }
@@ -433,8 +470,7 @@
             "items": [
               "Team leadership",
               "Technical writing",
-              "Self-directed learning",
-              "Debugging"
+              "Self-directed learning"
             ]
           }
         ]
@@ -451,7 +487,7 @@
       "GitHub Actions"
     ],
     "spoken_label": "Languages",
-    "spoken": "Persian (native), English (B1, working toward B2)"
+    "spoken": "Persian (native), English (B1)"
   },
   "education": {
     "title": "Education",
@@ -461,7 +497,7 @@
   },
   "contact": {
     "title": "Let's work together",
-    "text": "I'm looking for backend engineering roles and internships, remote or in Tehran. Email is the fastest way to reach me.",
+    "text": "I'm open to junior backend roles and internships, remote or on-site in Tehran. Email is the fastest way to reach me.",
     "email": "sepehrkhasto.private@gmail.com",
     "copy": "Copy email",
     "copied": "Copied",
@@ -490,7 +526,7 @@
   "footer": {
     "note": "© 2026 Sepehr Khastoo",
     "top": "Back to top",
-    "statement": "Backend engineer, Python and Django"
+    "statement": "Junior backend developer, Python and Django"
   },
   "notfound": {
     "title": "This page doesn't exist",

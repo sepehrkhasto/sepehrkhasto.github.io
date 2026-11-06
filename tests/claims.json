@@ -1,0 +1,155 @@
+{
+ "numbers": [
+  {
+   "tokens": [
+    "146"
+   ],
+   "claim": "Django tests in Aegis Web",
+   "source": "aegis-zk-planner: python manage.py test, 146 pass (also on Django 5.2.19)",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "556"
+   ],
+   "claim": "JavaScript checks in Aegis Web",
+   "source": "aegis-zk-planner: the node test run, 556 checks pass",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "971"
+   ],
+   "claim": "pytest tests in Aegis Desktop",
+   "source": "aegis-planner: pytest collects 971 items",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "600,000"
+   ],
+   "claim": "PBKDF2 iterations (web, desktop and the live demo)",
+   "source": "README security model; crypto.js; the desktop vault code",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "7.1.0"
+   ],
+   "claim": "Aegis Web release",
+   "source": "GitHub release v7.1.0 of aegis-zk-planner",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "2.11.10"
+   ],
+   "claim": "Aegis Desktop release",
+   "source": "GitHub release v2.11.10 of aegis-planner",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "409"
+   ],
+   "claim": "HTTP status for a stale save",
+   "source": "aegis-zk-planner vault/views.py save_vault: conflict response",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "10",
+    "50",
+    "90"
+   ],
+   "claim": "P10, P50 and P90 forecast quantiles",
+   "source": "refinery-risk-monitor forecasting code and README",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "3.12"
+   ],
+   "claim": "Python version of Refinery and Andarun",
+   "source": "refinery README badge; andarun README (requires Python 3.12)",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "4.2"
+   ],
+   "claim": "Django version of Aegis Web",
+   "source": "aegis-zk-planner requirements.txt (5.2 is tested and passes; site changes when the upgrade is applied)",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "6.1"
+   ],
+   "claim": "Django version of Andarun",
+   "source": "andarun requirements.txt (6.1.2)",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "3,20",
+    "9",
+    "0"
+   ],
+   "claim": "Username pattern [a-z0-9_]{3,20}",
+   "source": "andarun accounts validator",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "1.1"
+   ],
+   "claim": "Andarun is in version 1, phase 1.1",
+   "source": "andarun ROADMAP.md: Phase 1.1 in progress",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "256",
+    "2",
+    "1",
+    "3",
+    "4",
+    "6",
+    "2.0",
+    "3.0"
+   ],
+   "claim": "Digits that are part of names: AES-256, a 256-bit key, v1 to v4, PyQt6, SQLAlchemy 2.0, GPL-3.0, step numbers",
+   "source": "names of the technologies and licences, read from each repository",
+   "status": "verified"
+  },
+  {
+   "tokens": [
+    "2024"
+   ],
+   "claim": "Start of the degree (1403 in the Persian calendar)",
+   "source": "stated by Sepehr",
+   "status": "stated"
+  },
+  {
+   "tokens": [
+    "2026"
+   ],
+   "claim": "Year of the projects and of the work experience",
+   "source": "repository dates; stated by Sepehr",
+   "status": "stated"
+  }
+ ],
+ "statements": [
+  {
+   "claim": "Team of four (Refinery)",
+   "source": "stated by Sepehr: a frontend developer, a data analyst, an ML engineer and himself",
+   "status": "stated"
+  },
+  {
+   "claim": "Top three projects in the course (Refinery)",
+   "source": "stated by Sepehr; nothing public supports it",
+   "status": "unverified"
+  }
+ ]
+}

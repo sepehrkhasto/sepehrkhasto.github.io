@@ -4,6 +4,74 @@
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+  /* ---------- Buttons and downloads: a soft light follows the pointer (mouse only, never with reduced motion) ---------- */
+  if (finePointer.matches && !reduceMotion.matches) {
+    let frame = 0, last = null;
+    document.addEventListener("pointermove", (ev) => {
+      const el = ev.target instanceof Element ? ev.target.closest(".btn, .dl") : null;
+      if (!el) return;
+      last = { el, x: ev.clientX, y: ev.clientY };
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const r = last.el.getBoundingClientRect();
+        last.el.style.setProperty("--mx", `${(last.x - r.left).toFixed(0)}px`);
+        last.el.style.setProperty("--my", `${(last.y - r.top).toFixed(0)}px`);
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Hero: a faint glow follows the pointer (mouse only, never with reduced motion) ---------- */
+  const hero = $(".hero");
+  if (hero && window.matchMedia("(hover: hover) and (pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let frame = 0;
+    hero.addEventListener("pointermove", (ev) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const r = hero.getBoundingClientRect();
+        hero.style.setProperty("--hx", `${((ev.clientX - r.left) / r.width * 100).toFixed(1)}%`);
+        hero.style.setProperty("--hy", `${((ev.clientY - r.top) / r.height * 100).toFixed(1)}%`);
+      });
+    });
+  }
+
+  /* ---------- Day / night theme ---------- */
+  const themeBtn = $(".theme-btn");
+  if (themeBtn) {
+    const root = document.documentElement;
+    const isDay = () => root.getAttribute("data-theme") === "day";
+    const sync = () => {
+      themeBtn.setAttribute("aria-pressed", String(isDay()));
+      const m = $('meta[name="theme-color"]');
+      if (m) m.setAttribute("content", isDay() ? "#F6F0E3" : "#070B1F");
+    };
+    sync();
+    let current = isDay() ? "day" : "night"; // kept here too, so two quick clicks still alternate
+    themeBtn.addEventListener("click", () => {
+      const next = current === "day" ? "night" : "day";
+      current = next;
+      // The choice is saved at once; the page itself may switch a frame later, inside the transition.
+      try { localStorage.setItem("theme", next); } catch (e) { /* private mode: the choice lasts for this visit */ }
+      const apply = () => { root.setAttribute("data-theme", next); sync(); };
+      if (typeof document.startViewTransition !== "function" || reduceMotion.matches) { apply(); return; }
+      // The new theme is revealed outward from the button, as a circle. Browsers without the API just switch.
+      const r = themeBtn.getBoundingClientRect();
+      const x = r.left + r.width / 2, y = r.top + r.height / 2;
+      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      const ms = (parseFloat(getComputedStyle(root).getPropertyValue("--t-theme")) || 0.75) * 1000;
+      root.classList.add("theme-vt"); // the circle rules apply only to this transition, not to the page-to-page fade
+      const vt = document.startViewTransition(apply);
+      vt.finished.finally(() => root.classList.remove("theme-vt"));
+      vt.ready.then(() => root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: ms, easing: "cubic-bezier(.23,1,.32,1)", pseudoElement: "::view-transition-new(root)" }
+      )).catch(() => {});
+    });
+  }
 
   /* ---------- Mobile menu ---------- */
   const menuBtn = $(".menu-btn");
@@ -17,10 +85,11 @@
     };
     menuBtn.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
     nav.addEventListener("click", (ev) => { if (ev.target.closest("a")) setOpen(false); });
+    document.addEventListener("click", (ev) => { if (nav.classList.contains("open") && !ev.target.closest(".site-header")) setOpen(false); });
     document.addEventListener("keydown", (ev) => {
       if (ev.key === "Escape" && nav.classList.contains("open")) { setOpen(false); menuBtn.focus(); }
     });
-    window.matchMedia("(min-width: 901px)").addEventListener("change", () => setOpen(false));
+    window.matchMedia("(min-width: 56.3125em)").addEventListener("change", () => setOpen(false));
   }
 
   /* ---------- Current section in the nav ---------- */
@@ -44,12 +113,30 @@
   const cases = tabLinks.map((a) => $(a.getAttribute("href"))).filter(Boolean);
   if ("IntersectionObserver" in window && cases.length) {
     const seen = new Map();
+    // One gold line under the tabs that glides to the current one (an aria-hidden list item, so the list stays a list).
+    const tabList = tabLinks[0].closest("ol");
+    const ind = document.createElement("li");
+    ind.className = "ct-ind";
+    ind.setAttribute("aria-hidden", "true");
+    tabList.appendChild(ind);
+    let currentTab = null;
+    const place = () => {
+      if (!currentTab) { tabList.classList.remove("has-ind"); return; }
+      ind.style.setProperty("--x", `${currentTab.offsetLeft}px`);
+      ind.style.setProperty("--w", String(currentTab.offsetWidth / 100));
+      tabList.classList.add("has-ind");
+      // The first placement is instant; later ones glide.
+      requestAnimationFrame(() => tabList.classList.add("ready"));
+    };
+    if ("ResizeObserver" in window) new ResizeObserver(place).observe(tabList);
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => seen.set(en.target.id, en.isIntersecting));
       const current = cases.find((c) => seen.get(c.id));
+      currentTab = null;
       tabLinks.forEach((a) => {
         const on = Boolean(current) && a.getAttribute("href") === `#${current.id}`;
         if (on) {
+          currentTab = a;
           a.setAttribute("aria-current", "true");
           const list = a.closest("ol");
           const r = a.getBoundingClientRect();
@@ -58,6 +145,7 @@
           else if (r.right > box.right) list.scrollBy({ left: r.right - box.right + 16 });
         } else a.removeAttribute("aria-current");
       });
+      place();
     }, { rootMargin: "-30% 0px -60% 0px" });
     cases.forEach((c) => io.observe(c));
   }
@@ -78,8 +166,18 @@
         box.showModal();
       });
     });
-    $("[data-close]", box).addEventListener("click", () => box.close());
-    box.addEventListener("click", (ev) => { if (ev.target === box) box.close(); });
+    // Closing eases out first (the opening one is in CSS); with reduced motion it just closes.
+    const closeBox = () => {
+      if (!box.open || box.classList.contains("closing")) return;
+      if (reduceMotion.matches) { box.close(); return; }
+      box.classList.add("closing");
+      const done = () => { if (!box.classList.contains("closing")) return; box.classList.remove("closing"); if (box.open) box.close(); };
+      box.addEventListener("animationend", (ev) => { if (ev.target === box) done(); }, { once: true });
+      setTimeout(done, 400); // if the animation never reports back
+    };
+    box.addEventListener("cancel", (ev) => { ev.preventDefault(); closeBox(); });
+    $("[data-close]", box).addEventListener("click", closeBox);
+    box.addEventListener("click", (ev) => { if (ev.target === box) closeBox(); });
     box.addEventListener("close", () => { img.removeAttribute("src"); });
   }
 

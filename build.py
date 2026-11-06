@@ -12,6 +12,7 @@ import argparse
 import functools
 import http.server
 import json
+import math
 import re
 import shutil
 from datetime import date
@@ -93,31 +94,47 @@ def page_url(lang: str) -> str:
 
 
 ICONS = {
-    "download": '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
-    "file": '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/>',
-    "copy": '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
-    "menu": '<path d="M4 7h16M4 12h16M4 17h16"/>',
-    "external": '<path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4"/>',
-    "lock": '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
-    "check": '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
-    "expand": '<path d="M15 4h5v5M9 20H4v-5M20 4l-6 6M4 20l6-6"/>',
-    "arrow-up": '<path d="M12 19V5M6 11l6-6 6 6"/>',
-    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+    # Parts that move on hover sit in a group with class "a" (or "a1"/"a2", "b"); the static parts stay outside.
+    "download": '<path d="M5 20h14"/><g class="a"><path d="M12 4v11M7 10l5 5 5-5"/></g>',
+    "file": '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><g class="a"><path d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></g>',
+    "copy": '<rect class="a" x="8" y="8" width="12" height="12" rx="2"/><path class="b" d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+    "menu": '<path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/>',
+    "external": '<path d="M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4"/><g class="a"><path d="M14 5h5v5M19 5l-8 8"/></g>',
+    "lock": '<rect x="5" y="11" width="14" height="9" rx="2"/><path class="a" d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    "check": '<path class="a" pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/>',
+    "expand": '<g class="a1"><path d="M15 4h5v5M20 4l-6 6"/></g><g class="a2"><path d="M9 20H4v-5M4 20l6-6"/></g>',
+    "arrow-up": '<g class="a"><path d="M12 19V5M6 11l6-6 6 6"/></g>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path class="a" d="m4 7 8 6 8-6"/>',
     "github": '<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>',
 }
 
 
 def icon(name: str) -> str:
     return (
-        '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
+        f'<svg class="icon i-{name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
         f'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS[name]}</svg>'
     )
 
 
-MARK = (
-    '<svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#16264d"/>'
-    '<path d="M16.00 4.80L18.49 10.00L23.92 8.08L22.00 13.51L27.20 16.00L22.00 18.49L23.92 23.92L18.49 22.00L16.00 27.20L13.51 22.00L8.08 23.92L10.00 18.49L4.80 16.00L10.00 13.51L8.08 8.08L13.51 10.00Z" fill="none" stroke="#34B3B0" stroke-width="1.8" stroke-linejoin="round"/></svg>'
-)
+# One drawing for the brand mark: the header, the favicon and the touch icon all use these shapes and colours.
+# Only the line weight differs with the size it is shown at (see tools/make_icons.py).
+MARK_BG = "#0E1533"
+MARK_STAR = "M16.00 4.80L18.49 10.00L23.92 8.08L22.00 13.51L27.20 16.00L22.00 18.49L23.92 23.92L18.49 22.00L16.00 27.20L13.51 22.00L8.08 23.92L10.00 18.49L4.80 16.00L10.00 13.51L8.08 8.08L13.51 10.00Z"
+MARK_GOLD, MARK_TQ = "#D9B26A", "#3DC2B4"
+
+
+def mark_svg(stroke: float = 1.6, radius: float = 6, bleed: bool = False, cls: str = "") -> str:
+    """The brand mark. `bleed` makes the background a plain square (touch icons are rounded by the phone)."""
+    attrs = f' class="{cls}" aria-hidden="true"' if cls else ' xmlns="http://www.w3.org/2000/svg"'
+    rx = "" if bleed else f' rx="{radius:g}"'
+    return (
+        f'<svg{attrs} viewBox="0 0 32 32"><rect width="32" height="32"{rx} fill="{MARK_BG}"/>'
+        f'<path d="{MARK_STAR}" fill="none" stroke="{MARK_GOLD}" stroke-width="{stroke:g}" stroke-linejoin="round"/>'
+        f'<circle cx="16" cy="16" r="2.4" fill="{MARK_TQ}"/></svg>'
+    )
+
+
+MARK = mark_svg(cls="mark")
 
 
 def picture(key: str, alt: str, sizes: str, cls: str, eager: bool = False) -> str:
@@ -132,6 +149,131 @@ def picture(key: str, alt: str, sizes: str, cls: str, eager: bool = False) -> st
     )
 
 
+
+# --------------------------------------------------------------------------- art (inline SVG, no inline styles: the CSP forbids them)
+
+def _f(v: float) -> str:
+    t = f"{v:.1f}"
+    return t[:-2] if t.endswith(".0") else t
+
+
+def star8(cx: float, cy: float, r: float, rot: float = 0.0, k: float = 0.7654) -> str:
+    pts = []
+    for i in range(16):
+        rr = r if i % 2 == 0 else r * k
+        a = math.radians(-90 + rot) + i * math.pi / 8
+        pts.append(f"{_f(cx + rr * math.cos(a))} {_f(cy + rr * math.sin(a))}")
+    return "M" + "L".join(pts) + "Z"
+
+
+def _p(d: str, cls: str = "", draw: bool = True) -> str:
+    solid = draw and "d" not in cls.split()
+    c = (("dr " if solid else "") + cls).strip()
+    cls_attr = f' class="{c}"' if c else ""
+    length = ' pathLength="1"' if solid else ""
+    return f'<path{cls_attr} d="{d}"{length}/>'
+
+
+def _dot(x: float, y: float, r: float = 4.2) -> str:
+    return f'<circle class="h" cx="{_f(x)}" cy="{_f(y)}" r="{_f(r * 2.1)}"/><circle class="q" cx="{_f(x)}" cy="{_f(y)}" r="{_f(r)}"/>'
+
+
+def emblem(i: int) -> str:
+    if i == 0:  # fail closed: a gate with its bar across
+        body = [_p("M16 98H104", "t"), _p("M32 98V56A28 28 0 0 1 88 56V98", "th"), _p("M40 98V57A20 20 0 0 1 80 57V98", "t"),
+                _p("M60 37V98", "t"), _p("M24 68H96", "th"), _p("M24 62V74M96 62V74"),
+                f'<path class="f" d="{star8(60, 17, 6)}"/>', _dot(60, 68)]
+    elif i == 1:  # keep the server blind: closed eye over a rack of dots, the key stays outside
+        body = [_p("M32 26Q60 42 88 26", "th"), _p("M42 34l-3 6M60 37v7M78 34l3 6", "t")]
+        for y in (52, 68, 84):
+            body.append(_p(f"M34 {y}h52v12h-52Z"))
+            body += [f'<circle class="f s" cx="{x}" cy="{y + 6}" r="1.2"/>' for x in range(42, 82, 8)]
+        body += [_p("M24 76H27", "d"), _dot(15, 76)]
+    elif i == 2:  # explicit concurrency: two writes at one record, one turned back
+        body = [_p("M82 26h12v68h-12Z", "th"), _p("M14 46H78"), _p("M72 40l6 6l-6 6"), _p("M14 76H60"), _p("M54 70l6 6l-6 6"),
+                _p("M66 66V86", "th"), _p("M71 76H77", "d"), _dot(88, 46)]
+    else:  # prove it in CI: a loop with a check
+        body = [_p("M60 20A40 40 0 1 1 25.4 40"), _p("M26.1 50.8L25.4 40L15.7 44.8"), _p("M42 62l13 13l24 -28", "th"), _dot(55, 75, 3.8)]
+    return f'<svg class="em" viewBox="0 0 120 120" aria-hidden="true">{"".join(body)}</svg>'
+
+
+def tier_mark(i: int) -> str:
+    st = star8(11, 11, 9)
+    if i == 0:
+        inner = f'<path class="mf" d="{st}"/>'
+    elif i == 1:
+        inner = f'<path class="mo" d="{st}"/>'
+    elif i == 2:
+        inner = '<path class="md" d="M11 2l9 9l-9 9l-9-9Z"/><circle class="mq" cx="11" cy="11" r="2.6"/>'
+    else:
+        inner = '<circle class="mo" cx="11" cy="11" r="5"/>'
+    return f'<svg class="tmk" viewBox="0 0 22 22" aria-hidden="true">{inner}</svg>'
+
+
+def hero_art() -> str:
+    """A quiet engraved astrolabe behind the hero: rings, a star plate that turns slowly, one turquoise point."""
+    ticks = "".join(
+        f"M{_f(400 + 366 * math.cos(math.radians(a)))} {_f(400 + 366 * math.sin(math.radians(a)))}L{_f(400 + (380 if a % 30 == 0 else 374) * math.cos(math.radians(a)))} {_f(400 + (380 if a % 30 == 0 else 374) * math.sin(math.radians(a)))}"
+        for a in range(0, 360, 5)
+    )
+    return (
+        '<svg class="hero-art" viewBox="0 0 800 800" aria-hidden="true" focusable="false">'
+        + _p("M400 20A380 380 0 1 1 399.9 20Z", "g")
+        + _p(ticks, "t", False)
+        + _p("M400 70A330 330 0 1 1 399.9 70Z", "t")
+        + '<g class="spin">' + _p(star8(400, 400, 300), "g") + _p(star8(400, 400, 300, 22.5), "t") + _p(star8(400, 400, 210), "g") + "</g>"
+        + '<g class="spin2">' + _p("M400 190A210 210 0 1 1 399.9 190Z", "t") + _p("M400 260A140 140 0 1 1 399.9 260Z", "t")
+        + _p("M60 400H740M400 60V740", "t") + "</g>"
+        + '<circle class="w" cx="400" cy="400" r="10"/>'
+        + _dot(400, 400, 5)
+        + "</svg>"
+    )
+
+
+def rv(text: str) -> str:
+    """A title that rises out of a mask as it scrolls into view (see "Scroll" in site.css); plain text without that."""
+    return f'<span class="rv"><span>{e(text)}</span></span>'
+
+
+def tree_svg(t: dict) -> str:
+    """The planned invitation tree as a small constellation: you, members, invitations awaiting approval."""
+    members = {"a": (190, 70), "b": (190, 150), "c": (190, 230)}
+    kids = [("a", (330, 40), "m"), ("a", (330, 100), "m"), ("b", (330, 150), "p"), ("c", (330, 200), "m"), ("c", (330, 255), "m")]
+    deep = [((330, 40), (460, 30), "m"), ((330, 100), (460, 100), "p"), ((330, 200), (460, 190), "m"), ((330, 255), (460, 255), "p")]
+    you = (60, 150)
+    out = []
+
+    # d1, d2, d3 say how far from "you" a part is, so the picture can grow outward as it scrolls into view.
+    def edge(a, b, depth, pend=False):
+        mx = (a[0] + b[0]) / 2
+        out.append(f'<path class="te d{depth}{" tp" if pend else ""}" d="M{a[0]} {a[1]}C{_f(mx)} {a[1]} {_f(mx)} {b[1]} {b[0]} {b[1]}"/>')
+
+    def node(pt, kind, depth, r=11):
+        if kind == "p":
+            out.append(f'<path class="tpn d{depth}" d="M{pt[0]} {pt[1] - 9}l9 9l-9 9l-9-9Z"/>')
+        else:
+            out.append(f'<path class="tmb d{depth}" d="{star8(pt[0], pt[1], r)}"/>')
+
+    for pt in members.values():
+        edge(you, pt, 1)
+    for parent, pt, kind in kids:
+        edge(members[parent], pt, 2, kind == "p")
+    for pa, pt, kind in deep:
+        edge(pa, pt, 3, kind == "p")
+    out.append(f'<circle class="th" cx="{you[0]}" cy="{you[1]}" r="17"/><circle class="tq" cx="{you[0]}" cy="{you[1]}" r="8"/>')
+    for pt in members.values():
+        node(pt, "m", 1, 13)
+    for _, pt, kind in kids:
+        node(pt, kind, 2, 10)
+    for _, pt, kind in deep:
+        node(pt, kind, 3, 9)
+    out.append(f'<text class="tt" x="{you[0]}" y="{you[1] + 40}">{e(t["you"])}</text>')
+    leg = 20
+    out.append(f'<path class="tmb" d="{star8(300, 288, 7)}"/><text class="tl" x="314" y="292">{e(t["member"])}</text>')
+    out.append(f'<path class="tpn" d="M400 281l7 7l-7 7l-7-7Z"/><text class="tl" x="414" y="292">{e(t["pending"])}</text>')
+    return f'<svg class="tree-svg" viewBox="0 0 520 304" role="img" aria-label="{e(t["caption"])}">{"".join(out)}</svg>'
+
+
 # --------------------------------------------------------------------------- components
 
 def head(c: dict, lang: str) -> str:
@@ -141,7 +283,7 @@ def head(c: dict, lang: str) -> str:
         "@type": "Person",
         "name": "Sepehr Khastoo",
         "alternateName": "سپهر خستو",
-        "jobTitle": "Backend Engineer",
+        "jobTitle": "Junior Backend Developer",
         "url": SITE_URL + "/",
         "email": f"mailto:{c['contact']['email']}",
         "sameAs": [link["href"] for link in c["contact"]["links"]],
@@ -155,7 +297,7 @@ def head(c: dict, lang: str) -> str:
     ]
     person.pop("@context")
     graph = {"@context": "https://schema.org", "@graph": [person, *works]}
-    fonts = ["ibm-plex-sans-arabic-arabic-600-normal", "ibm-plex-sans-arabic-arabic-400-normal"] if lang == "fa" else ["ibm-plex-sans-latin-600-normal", "ibm-plex-sans-latin-400-normal"]
+    fonts = ["vazirmatn-arabic-500-normal", "vazirmatn-arabic-400-normal", "geist-sans-latin-400-normal"] if lang == "fa" else ["instrument-serif-latin-400-normal", "geist-sans-latin-400-normal"]
     preload = "\n".join(f'<link rel="preload" href="{{P}}assets/fonts/{f}.woff2" as="font" type="font/woff2" crossorigin>' for f in fonts)
     return f"""<head>
 <meta charset="utf-8">
@@ -174,13 +316,17 @@ def head(c: dict, lang: str) -> str:
 <meta property="og:title" content="{e(c['meta']['title'])}">
 <meta property="og:description" content="{e(c['meta']['description'])}">
 <meta property="og:url" content="{page_url(lang)}">
-<meta property="og:image" content="{SITE_URL}/assets/img/og.png">
+<meta property="og:image" content="{SITE_URL}/assets/img/{'og-fa.png' if lang == 'fa' else 'og.png'}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{e(c['meta']['og_alt'])}">
 <meta property="og:locale" content="{c['locale']}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0E1A36">
+<meta name="theme-color" content="#070B1F">
+<script src="{{P}}assets/js/theme.js"></script>
 <link rel="icon" href="{{P}}assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{{P}}assets/img/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="{{P}}assets/img/apple-touch-icon.png">
 {preload}
 <link rel="stylesheet" href="{{P}}assets/css/site.css">
 <script type="application/ld+json">{json.dumps(graph, ensure_ascii=False)}</script>
@@ -197,12 +343,15 @@ def site_header(c: dict, lang: str) -> str:
 <header class="site-header">
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="{e(n['home'])}">{MARK}<span>{e(c['name'])}</span></a>
+    <div class="bar-end">
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" data-open="{e(n['menu'])}" data-close="{e(n['close'])}">{icon('menu')}<span>{e(n['menu'])}</span></button>
     <nav id="site-nav" class="site-nav" aria-label="{e(n['menu'])}">
       <ul class="nav-links">{links}</ul>
       <a class="lang-link" href="{alt_href}" hreflang="{alt}" lang="{alt}" aria-label="{e(c['switch']['aria'])}">{e(c['switch']['label'])}</a>
       <a class="btn btn-tile btn-small" href="#contact">{e(n['cta'])}</a>
     </nav>
+    <button class="theme-btn" type="button" aria-pressed="false" aria-label="{e(n['theme'])}" title="{e(n['theme'])}"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+    </div>
   </div>
 </header>"""
 
@@ -222,8 +371,8 @@ def demo(c: dict) -> str:
       <input id="vault-pass" type="text" dir="ltr" autocomplete="off" spellcheck="false" value="correct horse battery"></div>
   </div>
   <ol class="vault-steps">{steps}</ol>
-  <div class="vault-server" aria-live="polite">
-    <div class="vault-server-head"><h3>{e(d['server_title'])}</h3><span id="vault-status"></span></div>
+  <div class="vault-server">
+    <div class="vault-server-head"><h3>{e(d['server_title'])}</h3><span id="vault-status" role="status"></span></div>
     <dl dir="ltr">
       <div><dt>salt</dt><dd id="vault-salt">…</dd></div>
       <div><dt>iterations</dt><dd>600000</dd></div>
@@ -242,6 +391,18 @@ def demo(c: dict) -> str:
 </div>"""
 
 
+def hero_name(c: dict) -> str:
+    """The name as two clipped lines (so each can rise into place); Persian stays one line with a gold surname."""
+    words = c["name"].split(" ")
+    if len(words) < 2:
+        return f'<span class="ln"><span class="l">{e(c["name"])}</span></span>'
+    if c["dir"] == "rtl":  # one line; the surname carries the same gold as the English page
+        return (f'<span class="ln"><span class="l">{e(words[0])}</span> '
+                f'<span class="l shim">{e(" ".join(words[1:]))}</span></span>')
+    return (f'<span class="ln"><span class="l">{e(words[0])}</span></span> '
+            f'<span class="ln"><span class="l it shim">{e(" ".join(words[1:]))}</span></span>')
+
+
 def hero(c: dict) -> str:
     h = c["hero"]
     resume = c["contact"]["resume_files"][0]["file"]
@@ -255,11 +416,11 @@ def hero(c: dict) -> str:
         else:
             repos.append(f'<li><div class="repo repo-private">{icon("lock")}{inner}</div></li>')
     return f"""<section class="hero" id="top" aria-labelledby="hero-name">
-  <div class="hero-art" aria-hidden="true"></div>
+  {hero_art()}
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <p class="hero-role">{e(h['role'])}</p>
-      <h1 id="hero-name">{e(c['name'])}</h1>
+      <h1 id="hero-name">{hero_name(c)}</h1>
       <p class="hero-statement">{e(h['statement'])}</p>
       <p class="hero-summary">{e(h['summary'])}</p>
       <div class="hero-actions">
@@ -271,7 +432,7 @@ def hero(c: dict) -> str:
     {demo(c)}
   </div>
   <div class="wrap repos">
-    <h2 class="repos-title">{e(r['title'])}</h2>
+    <h2 class="repos-title">{rv(r['title'])}</h2>
     <ul class="repo-list">{''.join(repos)}</ul>
   </div>
 </section>"""
@@ -305,21 +466,7 @@ def stage(p: dict, L: dict) -> str:
     )
     return f"""<div class="stage stage-andarun">
       <figure class="tree">
-        <svg viewBox="0 0 420 250" role="img" aria-label="{e(t['caption'])}">
-          <g class="tree-edges">
-            <path d="M210 44V78H90V118M210 78H330V118M210 78V118"/>
-            <path d="M90 150V178H50V208M90 178H130V208M330 150V178H290V208M330 178H370V208"/>
-          </g>
-          <g class="tree-nodes">
-            <rect class="node-root" x="160" y="14" width="100" height="32" rx="16"/><text x="210" y="35">{e(t['you'])}</text>
-            <rect x="45" y="118" width="90" height="32" rx="16"/><text x="90" y="139">{e(t['member'])}</text>
-            <rect x="165" y="118" width="90" height="32" rx="16"/><text x="210" y="139">{e(t['member'])}</text>
-            <rect x="285" y="118" width="90" height="32" rx="16"/><text x="330" y="139">{e(t['member'])}</text>
-            <circle cx="50" cy="216" r="9"/><circle cx="130" cy="216" r="9"/><circle cx="290" cy="216" r="9"/>
-            <circle class="node-pending" cx="370" cy="216" r="9"/>
-          </g>
-          <text class="tree-note" x="370" y="244">{e(t['pending'])}</text>
-        </svg>
+        {tree_svg(t)}
         <figcaption>{e(t['caption'])}</figcaption>
       </figure>
       <div class="roadmap">
@@ -327,6 +474,34 @@ def stage(p: dict, L: dict) -> str:
         <table><tbody>{rows}</tbody></table>
       </div>
     </div>"""
+
+
+def flow(p: dict) -> str:
+    """The save path of Aegis Web as ordered steps in two lanes (browser, server), with the line between them marked.
+
+    Plain HTML, so it reads as an ordered list, mirrors for right-to-left and needs no inline styles."""
+    f = p.get("flow")
+    if not f:
+        return ""
+
+    def step(i: int, s: dict, extra: str = "") -> str:
+        return f'<li class="flow-step s{i}"><p class="flow-t">{e(s["t"])}</p><p class="flow-d">{e(s["d"])}</p>{extra}</li>'
+
+    first, last = f["steps"][:-1], f["steps"][-1]
+    outcomes = "".join(
+        f'<li class="{cls}"><span class="out-tag">{e(o["tag"])}</span>{e(o["d"])}</li>'
+        for cls, o in zip(("out-ok", "out-stale"), f["outcomes"])
+    )
+    browser = "".join(step(i + 1, s) for i, s in enumerate(first))
+    server = step(len(first) + 1, last, f'<ul class="flow-out">{outcomes}</ul>')
+    return f"""<figure class="flow">
+    <h4>{e(f['title'])}</h4>
+    <div class="flow-lanes">
+      <div class="flow-lane flow-browser" role="group" aria-label="{e(f['browser'])}"><p class="flow-lane-name" aria-hidden="true">{e(f['browser'])}</p><ol>{browser}</ol></div>
+      <p class="flow-cut">{e(f['cut'])}</p>
+      <div class="flow-lane flow-server" role="group" aria-label="{e(f['server'])}"><p class="flow-lane-name" aria-hidden="true">{e(f['server'])}</p><ol start="{len(first) + 1}">{server}</ol></div>
+    </div>
+  </figure>"""
 
 
 def case(p: dict, L: dict) -> str:
@@ -356,7 +531,7 @@ def case(p: dict, L: dict) -> str:
   <header class="case-head">
     <div class="case-titles">
       <p class="case-kind"><span>{e(p['kind'])}</span><span>{e(p['year'])}</span></p>
-      <h3 id="work-{pid}-title">{e(p['name'])}</h3>
+      <h3 id="work-{pid}-title">{rv(p['name'])}<span class="sr-only"> {e(p['kind'])}</span></h3>
       <p class="case-tagline">{e(p['tagline'])}</p>
     </div>
     <div class="case-side">
@@ -365,6 +540,7 @@ def case(p: dict, L: dict) -> str:
     </div>
   </header>
   {stage(p, L).replace('{ROADMAP}', e(L['roadmap']))}
+  {flow(p)}
   <div class="case-body">
     <div class="case-story">
       <h4>{e(L['problem'])}</h4><p>{e(p['problem'])}</p>
@@ -385,7 +561,7 @@ def work(c: dict) -> str:
     )
     return f"""<section class="section work" id="work" aria-labelledby="work-title">
   <div class="wrap">
-    <div class="sec-head"><h2 id="work-title">{e(w['title'])}</h2>{f"<p>{e(w['intro'])}</p>" if w['intro'] else ""}</div>
+    <div class="sec-head"><h2 id="work-title">{rv(w['title'])}</h2>{f"<p>{e(w['intro'])}</p>" if w['intro'] else ""}</div>
   </div>
   <nav class="case-tabs" aria-label="{e(w['labels']['tabs'])}"><div class="wrap"><ol>{tabs}</ol></div></nav>
   <div class="wrap">
@@ -398,12 +574,12 @@ def approach(c: dict) -> str:
     a = c["approach"]
     about = "".join(f"<p>{e(p)}</p>" for p in a["about"])
     principles = "".join(
-        f'<li><h3>{e(p["title"])}</h3><p class="principle">{e(p["text"])}</p><p class="evidence">{e(p["evidence"])}</p></li>'
-        for p in a["principles"]
+        f'<li>{emblem(i)}<div><h3>{e(p["title"])}</h3><p class="principle">{e(p["text"])}</p><p class="evidence">{e(p["evidence"])}</p></div></li>'
+        for i, p in enumerate(a["principles"])
     )
     return f"""<section class="section approach" id="approach" aria-labelledby="approach-title">
   <div class="wrap approach-grid">
-    <div class="approach-intro"><h2 id="approach-title">{e(a['title'])}</h2>{about}</div>
+    <div class="approach-intro"><h2 id="approach-title">{rv(a['title'])}</h2>{about}</div>
     <ul class="principles">{principles}</ul>
   </div>
 </section>"""
@@ -413,16 +589,19 @@ def skills(c: dict) -> str:
     s = c["skills"]
     ed = c["education"]
     tiers = []
-    for t in s["tiers"]:
-        groups = "".join(
-            (f'<h4>{e(g["label"])}</h4>' if g["label"] else "") + f'<ul{" class=\"inline\"" if g["label"] and all(len(i) <= 30 for i in g["items"]) else ""}>{"".join(f"<li>{e(i)}</li>" for i in g["items"])}</ul>'
-            for g in t["groups"]
-        )
-        tiers.append(f'<div class="tier"><h3>{e(t["name"])}</h3>{groups}</div>')
+    def group(g: dict) -> str:
+        head = f'<h4>{e(g["label"])}</h4>' if g["label"] else ""
+        inline = ' class="inline"' if g["label"] and all(len(i) <= 30 for i in g["items"]) else ""
+        items = "".join(f"<li>{e(i)}</li>" for i in g["items"])
+        return f"{head}<ul{inline}>{items}</ul>"
+
+    for ti, t in enumerate(s["tiers"]):
+        groups = "".join(group(g) for g in t["groups"])
+        tiers.append(f'<div class="tier"><h3>{tier_mark(ti)}<span>{e(t["name"])}</span></h3>{groups}</div>')
     used = "".join(f"<li>{e(i)}</li>" for i in s["used_items"])
     return f"""<section class="section skills" id="skills" aria-labelledby="skills-title">
   <div class="wrap">
-    <div class="sec-head"><h2 id="skills-title">{e(s['title'])}</h2></div>
+    <div class="sec-head"><h2 id="skills-title">{rv(s['title'])}</h2></div>
     <div class="tiers">{''.join(tiers[:2])}<div class="tier-stack">{''.join(tiers[2:])}</div></div>
     <div class="skills-foot">
       <div><h3>{e(s['used_label'])}</h3><ul class="chips" dir="ltr">{used}</ul></div>
@@ -447,7 +626,7 @@ def contact(c: dict) -> str:
   <div class="hero-art hero-art-soft" aria-hidden="true"></div>
   <div class="wrap contact-grid">
     <div>
-      <h2 id="contact-title">{e(k['title'])}</h2>
+      <h2 id="contact-title">{rv(k['title'])}</h2>
       <p class="contact-text">{e(k['text'])}</p>
       <p class="mail-row"><a class="mail" href="mailto:{e(k['email'])}" dir="ltr">{e(k['email'])}</a></p>
       <div class="contact-actions">
@@ -528,7 +707,7 @@ def not_found() -> str:
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="{CSP}">
 <title>Page not found, Sepehr Khastoo</title><meta name="robots" content="noindex">
-<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/css/site.css"></head>
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><link rel="icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png"><script src="/assets/js/theme.js"></script><link rel="stylesheet" href="/assets/css/site.css"></head>
 <body class="notfound-page"><main class="wrap notfound">{''.join(blocks)}</main></body>
 </html>
 """
